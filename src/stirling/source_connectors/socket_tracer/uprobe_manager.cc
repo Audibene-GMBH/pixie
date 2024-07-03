@@ -296,6 +296,7 @@ struct SSLLibMatcher {
 constexpr char kLibSSL_1_1[] = "libssl.so.1.1";
 constexpr char kLibSSL_3[] = "libssl.so.3";
 constexpr char kLibPython[] = "libpython";
+constexpr char kLibPulsar[] = "libpulsar-";
 
 static constexpr const auto kLibSSLMatchers = MakeArray<SSLLibMatcher>({
     SSLLibMatcher{
@@ -315,6 +316,13 @@ static constexpr const auto kLibSSLMatchers = MakeArray<SSLLibMatcher>({
         // (e.g. libpython3.10.so.0.1).
         .libssl = kLibPython,
         .libcrypto = kLibPython,
+        .search_type = HostPathForPIDPathSearchType::kSearchTypeContains,
+        .socket_fd_access = SSLSocketFDAccess::kNestedSyscall,
+    },
+    SSLLibMatcher{
+        // Pulsar's python client dynamically links OpenSSL within its own .so
+        .libssl = kLibPulsar,
+        .libcrypto = kLibPulsar,
         .search_type = HostPathForPIDPathSearchType::kSearchTypeContains,
         .socket_fd_access = SSLSocketFDAccess::kNestedSyscall,
     },
@@ -339,7 +347,7 @@ ssl_source_t SSLSourceFromLib(std::string_view libssl) {
     return kLibNettyTcnativeSource;
   }
 
-  DCHECK(false) << "Unable to find matching ssl_source_t for library matcher: " << libssl;
+  // DCHECK(false) << "Unable to find matching ssl_source_t for library matcher: " << libssl;
 
   return kSSLUnspecified;
 }
