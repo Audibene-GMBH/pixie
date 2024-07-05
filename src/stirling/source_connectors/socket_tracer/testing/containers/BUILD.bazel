@@ -108,6 +108,11 @@ container_image(
 )
 
 container_image(
+    name = "pulsar_image",
+    base = "@pulsar_base_image//image",
+)
+
+container_image(
     name = "zookeeper_image",
     base = "@zookeeper_base_image//image",
 )
